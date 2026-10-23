@@ -18,14 +18,19 @@ Circuit::Circuit() : m_current_time(0)
 
 Circuit::~Circuit()
 {
-    for(auto i : m_wires)
-    {
-        delete i;
-    }
-    for(auto i : m_gates)
-    {
-        delete i;
-    }
+	while(!m_pq.empty())
+	{
+		delete m_pq.top();
+		m_pq.pop();
+	}
+	for(auto i : m_wires)
+	{
+			delete i;
+	}
+	for(auto i : m_gates)
+	{
+			delete i;
+	}
 }
 
 void Circuit::test()
@@ -110,6 +115,14 @@ bool Circuit::parse(const char* fname)
                     m_gates.push_back(new Or2Gate(m_wires[stoi(s_in1)], m_wires[stoi(s_in2)], m_wires[stoi(s_output)]));
                 }
                 //Add code here to support the NOT gate type
+								if(s_type == "NOT")
+								{
+									std::string s_input;
+									getline(ss, s_input, ',');
+									std::string s_output;
+									getline(ss, s_output, ',');
+									m_gates.push_back(new NotGate(m_wires[stoi(s_input)], m_wires[stoi(s_output)]));
+								}
             }
         }
         if(line == "INJECT")
